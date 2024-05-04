@@ -2,7 +2,6 @@ from OpenGL import GL
 import OpenGL.GL.shaders
 from pyopengltk import OpenGLFrame
 import tkinter as tk
-from tkinter import ttk
 import numpy as np
 import ctypes
 
@@ -164,14 +163,14 @@ class ShaderFrame(OpenGLFrame):
         if self.L_last_x is not None and self.L_last_y is not None:
             dx, dy = event.x - self.L_last_x, event.y - self.L_last_y
             self.L_pan_x -= (dx / self.width * 2) / self.scale
-            self.L_pan_y += (dy / self.height * 2) / self.scale
+            self.L_pan_y += (dy / self.width * 2) / self.scale
             self.L_last_x, self.L_last_y = event.x, event.y
             moved = True
 
         if self.R_last_x is not None and self.R_last_y is not None:
             dx, dy = event.x - self.R_last_x, event.y - self.R_last_y
             self.R_pan_x -= (dx / self.width * 2) / self.julia_scale
-            self.R_pan_y += (dy / self.height * 2) / self.julia_scale
+            self.R_pan_y += (dy / self.width * 2) / self.julia_scale
             self.R_last_x, self.R_last_y = event.x, event.y
             moved = True
 
@@ -219,8 +218,8 @@ class App(tk.Tk):
         super().__init__()
         self.attributes("-fullscreen", True)
 
-        self.fractalframe = ShaderFrame(self, width=1000, height=1000)
-        self.fractalframe.pack(fill=tk.BOTH, expand=tk.YES)
+        fractalframe = ShaderFrame(self, width=1000, height=1000)
+        fractalframe.pack(fill=tk.BOTH, expand=tk.YES)
 
 
 
