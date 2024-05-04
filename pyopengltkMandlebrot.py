@@ -45,104 +45,14 @@ def compileShader(source, shaderType):
         )
     return shader
 
+with open("vertex.glsl", "r") as file:
+    vertex_shader_source = file.read()
 
-vertex_shader_source = """
-#version 330 core
-layout (location = 0) in vec3 position;
+with open("mandlebrot.glsl", "r") as file:
+    mandlebrot_fragment_shader_source = file.read()
 
-void main()
-{
-    gl_Position = vec4(position, 1.0);
-}
-"""
-
-mandlebrot_fragment_shader_source = """
-#version 330 core
-uniform vec2 resolution;
-uniform vec2 L_pan;
-uniform float scale;
-
-out vec4 color;
-
-vec2 f(vec2 c, vec2 z)
-{
-    return vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y) + c;
-}
-
-vec3 HSV_to_RGB(vec3 c) {
-    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-}
-
-void main()
-{
-    vec2 z = vec2(0.0, 0.0);
-    vec2 coord = (((gl_FragCoord.xy - resolution.xy/2)/resolution.x) * 2.0);
-    vec2 c = coord / scale + L_pan;
-
-    int max_iter = 128;
-    int i = 0;
-    while (i < max_iter && length(z) < 2.0)
-    {
-        z = f(c, z);
-        ++i;
-    }
-
-    if (i == max_iter)
-    {
-        color = vec4(0.0, 0.0, 0.0, 1.0);
-    } else {
-        float t = float(i) / float(max_iter);
-        color = vec4(HSV_to_RGB(vec3(t+0.6f, 1.0, 1.0)), 1.0);
-    }
-}
-"""
-
-
-julia_fragment_shader_source = """
-#version 330 core
-uniform vec2 resolution;
-uniform vec2 L_pan;
-uniform vec2 R_pan;
-uniform float scale;
-
-out vec4 color;
-
-vec2 f(vec2 c, vec2 z)
-{
-    return vec2(z.x*z.x - z.y*z.y, 2.0*z.x*z.y) + c;
-}
-
-vec3 HSV_to_RGB(vec3 c) {
-    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-}
-
-void main()
-{
-    vec2 c = L_pan;
-    vec2 coord = (((gl_FragCoord.xy - resolution.xy/2)/resolution.x) * 2.0);
-    vec2 z = coord / scale + R_pan;
-
-    int max_iter = 128;
-    int i = 0;
-    while (i < max_iter && length(z) < 2.0)
-    {
-        z = f(c, z);
-        ++i;
-    }
-
-    if (i == max_iter)
-    {
-        color = vec4(0.0, 0.0, 0.0, 1.0);
-    } else {
-        float t = float(i) / float(max_iter);
-        color = vec4(HSV_to_RGB(vec3(t+0.6f, 1.0, 1.0)), 1.0);
-    }
-}
-"""
+with open("julia.glsl", "r") as file:
+    julia_fragment_shader_source = file.read()
 
 class ShaderFrame(OpenGLFrame):
     def __init__(self, *args, **kwargs):
@@ -311,21 +221,6 @@ class App(tk.Tk):
 
         self.fractalframe = ShaderFrame(self, width=1000, height=1000)
         self.fractalframe.pack(fill=tk.BOTH, expand=tk.YES)
-
-        # self.create_menubar()
-
-    # def create_menubar(self):
-    #     self.menubar = tk.Menu(self)
-    #     self.config(menu=self.menubar)
-    #
-    #     self.input_menu = tk.Menu(self.menubar, tearoff=0)
-    #
-    #     self.scale_var = tk.StringVar()
-    #     self.scale_entry = ttk.Entry(self.input_menu, textvariable=self.scale_var)
-    #     self.scale_entry.bind("")
-    #     self.scale_entry.pack()
-    #
-    #     self.menubar.add_cascade(label="Input", menu=self.input_menu)
 
 
 
