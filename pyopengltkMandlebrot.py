@@ -44,6 +44,8 @@ def compileShader(source, shaderType):
         )
     return shader
 
+
+
 with open("vertex.glsl", "r") as file:
     vertex_shader_source = file.read()
 
