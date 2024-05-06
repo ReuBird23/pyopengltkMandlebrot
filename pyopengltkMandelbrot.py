@@ -49,11 +49,13 @@ def compileShader(source, shaderType):
 with open("vertex.glsl", "r") as file:
     vertex_shader_source = file.read()
 
-with open("mandlebrot.glsl", "r") as file:
-    mandlebrot_fragment_shader_source = file.read()
+with open("mandelbrot.glsl", "r") as file:
+    mandelbrot_fragment_shader_source = file.read()
 
 with open("julia.glsl", "r") as file:
     julia_fragment_shader_source = file.read()
+
+
 
 class ShaderFrame(OpenGLFrame):
     def __init__(self, *args, **kwargs):
@@ -81,7 +83,7 @@ class ShaderFrame(OpenGLFrame):
         if self.julia_mode:
             fragment_shader_source = julia_fragment_shader_source
         else:
-            fragment_shader_source = mandlebrot_fragment_shader_source
+            fragment_shader_source = mandelbrot_fragment_shader_source
         self.shader = GL.shaders.compileProgram(
                 compileShader(vertex_shader_source, GL.GL_VERTEX_SHADER),
                 compileShader(fragment_shader_source, GL.GL_FRAGMENT_SHADER)
