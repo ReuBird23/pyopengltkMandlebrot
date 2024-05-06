@@ -1,0 +1,3 @@
+[submodule "OpenGL"]
+	path = OpenGL
+	url = https://github.com/mcfletch/pyopengl
