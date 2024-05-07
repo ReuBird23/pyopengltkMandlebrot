@@ -1,6 +1,7 @@
-from OpenGL import GL
+#use environment variable "PYOPENGL_PLATFORM=glx" on linux to force X11
+from OpenGL import GL # pip install pyopengl or https://github.com/mcfletch/pyopengl/tree/master/OpenGL
 import OpenGL.GL.shaders
-from pyopengltk import OpenGLFrame
+from pyopengltk import OpenGLFrame # pip install pyopengltk or https://github.com/jonwright/pyopengltk/tree/master/pyopengltk
 import tkinter as tk
 import numpy as np
 import ctypes
@@ -79,26 +80,27 @@ class ShaderFrame(OpenGLFrame):
 
 
     def initgl(self):
-        GL.glClearColor(0.0, 0.0, 0.0, 1.0)
-        if self.julia_mode:
+        GL.glClearColor(0.0, 0.0, 0.0, 1.0) # clear the buffer with black
+        if self.julia_mode: # compile different shader based on which mode is being used
             fragment_shader_source = julia_fragment_shader_source
         else:
             fragment_shader_source = mandelbrot_fragment_shader_source
-        self.shader = GL.shaders.compileProgram(
+        self.shader = GL.shaders.compileProgram( # compile vertex and fragment shaders
                 compileShader(vertex_shader_source, GL.GL_VERTEX_SHADER),
                 compileShader(fragment_shader_source, GL.GL_FRAGMENT_SHADER)
             )
 
-        self.vao = self.create_quad()
+        self.vao = self.create_quad() # fullscreen quad so each pixel can be shaded
+        # get references for each uniform
         self.u_resolution = GL.glGetUniformLocation(self.shader, bytestr('resolution'))
         self.u_L_pan = GL.glGetUniformLocation(self.shader, bytestr('L_pan'))
         if self.julia_mode:
             self.u_R_pan = GL.glGetUniformLocation(self.shader, bytestr('R_pan'))
         self.u_scale = GL.glGetUniformLocation(self.shader, bytestr('scale'))
-        self.bind("<Configure>", self.resize)
+        self.bind("<Configure>", self.resize) # handle window resizing
 
 
-    def create_quad(self):
+    def create_quad(self): # create the fullscreen quad
         vertices = np.array([
             -1.0, -1.0, 0.0, #0
              1.0, -1.0, 0.0, #1
@@ -129,8 +131,9 @@ class ShaderFrame(OpenGLFrame):
         return vao
 
     def redraw(self):
-        GL.glClear(GL.GL_COLOR_BUFFER_BIT)
-        GL.glUseProgram(self.shader)
+        GL.glClear(GL.GL_COLOR_BUFFER_BIT) # clear the buffer
+        GL.glUseProgram(self.shader) # specify which shader program to use
+        # assign all the uniform values
         GL.glUniform2f(self.u_resolution, self.width, self.height)
         GL.glUniform2f(self.u_L_pan, self.L_pan_x, self.L_pan_y)
         if self.julia_mode:
@@ -139,9 +142,8 @@ class ShaderFrame(OpenGLFrame):
         else:
             GL.glUniform1f(self.u_scale, self.scale)
         GL.glBindVertexArray(self.vao)
-        GL.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, None)
+        GL.glDrawElements(GL.GL_TRIANGLES, 6, GL.GL_UNSIGNED_INT, None) # draw the two corner triangles
         GL.glBindVertexArray(0)
-        GL.glUseProgram(self.shader)
 
 
     def bind_events(self):
@@ -214,7 +216,7 @@ class ShaderFrame(OpenGLFrame):
 
     def resize(self, event):
         super().tkResize(event)
-        self._display()
+        self._display() #hack
 
 
 class App(tk.Tk):
