@@ -8,3 +8,4 @@ venv
 *.pdf
 *.vrb
 __pycache__/
+_minted-presentation
